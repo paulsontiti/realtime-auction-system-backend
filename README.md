@@ -104,4 +104,23 @@ It focuses on:
             ┌──────────────────┐
             │   Kafka Stream   │
             └──────────────────┘
-            
+## 📁 Project Structure
+
+
+src/
+├── modules/
+│ ├── auction/
+│ ├── bid/
+│
+├── infrastructure/
+│ ├── prisma/
+│ ├── redis/
+│ ├── socket/
+│ ├── kafka/
+│
+├── shared/
+│ ├── middleware/
+│ ├── utils/
+│
+├── app.ts
+└── server.ts

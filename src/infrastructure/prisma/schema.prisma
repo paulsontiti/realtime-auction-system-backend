@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  email    String    @unique
+  password String
+  auctions Auction[] // all auctions created by this user
+  bids     Bid[] // all bids placed by this user
+}
+
+model Auction {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String
+  startingPrice Float
+  highestBid    Float?
+  startTime     DateTime
+  endTime       DateTime
+  status        AuctionStatus @default(SCHEDULED)
+  sellerId      String        @db.ObjectId
+  seller        User          @relation(fields: [sellerId], references: [id])
+  bids          Bid[] // all bids for this auction
+}
+
+model Bid {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  auctionId String   @db.ObjectId
+  bidderId  String   @db.ObjectId
+  amount    Float
+  createdAt DateTime @default(now())
+  auction   Auction  @relation(fields: [auctionId], references: [id])
+  bidder    User     @relation(fields: [bidderId], references: [id])
+}
+
+enum AuctionStatus {
+  SCHEDULED
+  LIVE
+  ENDED
+}
